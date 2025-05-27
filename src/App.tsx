@@ -1,5 +1,6 @@
 import React from 'react';
 import TodoForm from './components/TodoForm';
+import TodoItem from './components/TodoItem';
 import { useTodo } from './context/TodoContext';
 
 const App: React.FC = () => {
@@ -11,10 +12,7 @@ const App: React.FC = () => {
       <TodoForm />
       <ul>
         {state.todos.map((todo) => (
-          <li key={todo.id} className="todo-item">
-            <input type="checkbox" checked={todo.completed} readOnly />
-            <span>{todo.text}</span>
-          </li>
+          <TodoItem key={todo.id} todo={todo} />
         ))}
       </ul>
     </div>

@@ -10,7 +10,11 @@ interface TodoState {
   todos: Todo[];
 }
 
-type TodoAction = { type: 'ADD_TODO'; payload: string };
+type TodoAction =
+  | { type: 'ADD_TODO'; payload: string }
+  | { type: 'EDIT_TODO'; payload: { id: number; text: string } }
+  | { type: 'DELETE_TODO'; payload: number }
+  | { type: 'TOGGLE_TODO'; payload: number };
 
 interface TodoContextType {
   state: TodoState;
@@ -28,6 +32,29 @@ const todoReducer = (state: TodoState, action: TodoAction): TodoState => {
           ...state.todos,
           { id: Date.now(), text: action.payload, completed: false },
         ],
+      };
+    case 'EDIT_TODO':
+      return {
+        ...state,
+        todos: state.todos.map((todo) =>
+          todo.id === action.payload.id
+            ? { ...todo, text: action.payload.text }
+            : todo
+        ),
+      };
+    case 'DELETE_TODO':
+      return {
+        ...state,
+        todos: state.todos.filter((todo) => todo.id !== action.payload),
+      };
+    case 'TOGGLE_TODO':
+      return {
+        ...state,
+        todos: state.todos.map((todo) =>
+          todo.id === action.payload
+            ? { ...todo, completed: !todo.completed }
+            : todo
+        ),
       };
     default:
       return state;
