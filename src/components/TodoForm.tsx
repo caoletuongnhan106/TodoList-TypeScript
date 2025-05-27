@@ -12,6 +12,13 @@ const TodoForm: React.FC = () => {
     }
   }, [input, dispatch]);
 
+  const handleSearch = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      dispatch({ type: 'SET_SEARCH_TERM', payload: e.target.value });
+    },
+    [dispatch]
+  );
+
   return (
     <div className="todo-form">
       <div className="input-group">
@@ -23,6 +30,12 @@ const TodoForm: React.FC = () => {
         />
         <button onClick={handleAddTodo}>Add</button>
       </div>
+      <input
+        type="text"
+        onChange={handleSearch}
+        placeholder="Search todos"
+        className="search-input"
+      />
     </div>
   );
 };

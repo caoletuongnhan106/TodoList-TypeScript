@@ -8,13 +8,15 @@ interface Todo {
 
 interface TodoState {
   todos: Todo[];
+  searchTerm: string;
 }
 
 type TodoAction =
   | { type: 'ADD_TODO'; payload: string }
   | { type: 'EDIT_TODO'; payload: { id: number; text: string } }
   | { type: 'DELETE_TODO'; payload: number }
-  | { type: 'TOGGLE_TODO'; payload: number };
+  | { type: 'TOGGLE_TODO'; payload: number }
+  | { type: 'SET_SEARCH_TERM'; payload: string };
 
 interface TodoContextType {
   state: TodoState;
@@ -56,6 +58,11 @@ const todoReducer = (state: TodoState, action: TodoAction): TodoState => {
             : todo
         ),
       };
+    case 'SET_SEARCH_TERM':
+      return {
+        ...state,
+        searchTerm: action.payload,
+      };
     default:
       return state;
   }
@@ -64,6 +71,7 @@ const todoReducer = (state: TodoState, action: TodoAction): TodoState => {
 export const TodoProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(todoReducer, {
     todos: [],
+    searchTerm: '',
   });
 
   return (
