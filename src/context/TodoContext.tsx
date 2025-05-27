@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer } from 'react';
+import React, { createContext, useContext, useReducer, useEffect } from 'react';
 
 interface Todo {
   id: number;
@@ -16,7 +16,8 @@ type TodoAction =
   | { type: 'EDIT_TODO'; payload: { id: number; text: string } }
   | { type: 'DELETE_TODO'; payload: number }
   | { type: 'TOGGLE_TODO'; payload: number }
-  | { type: 'SET_SEARCH_TERM'; payload: string };
+  | { type: 'SET_SEARCH_TERM'; payload: string }
+  | { type: 'LOAD_TODOS'; payload: Todo[] };
 
 interface TodoContextType {
   state: TodoState;
@@ -63,6 +64,11 @@ const todoReducer = (state: TodoState, action: TodoAction): TodoState => {
         ...state,
         searchTerm: action.payload,
       };
+    case 'LOAD_TODOS':
+      return {
+        ...state,
+        todos: action.payload,
+      };
     default:
       return state;
   }
@@ -73,6 +79,17 @@ export const TodoProvider: React.FC<{ children: React.ReactNode }> = ({ children
     todos: [],
     searchTerm: '',
   });
+
+  useEffect(() => {
+    localStorage.setItem('todos', JSON.stringify(state.todos));
+  }, [state.todos]);
+
+  useEffect(() => {
+    const savedTodos = localStorage.getItem('todos');
+    if (savedTodos) {
+      dispatch({ type: 'LOAD_TODOS', payload: JSON.parse(savedTodos) });
+    }
+  }, []);
 
   return (
     <TodoContext.Provider value={{ state, dispatch }}>
